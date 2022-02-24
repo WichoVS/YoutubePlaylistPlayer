@@ -41,7 +41,7 @@ export class InicioComponent implements OnInit {
         }
       });
     } else {
-      alert('asegurate de incluir todo el link de la playlist');
+      alert('Ingresa el link de la playlist al dar en Compartir');
     }
   }
 
