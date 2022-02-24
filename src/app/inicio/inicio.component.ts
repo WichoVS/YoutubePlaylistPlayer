@@ -85,7 +85,7 @@ export class InicioComponent implements OnInit {
       case (window as { [key: string]: any })['YT'].PlayerState.PAUSED:
         break;
       case (window as { [key: string]: any })['YT'].PlayerState.ENDED:
-        if (this.playlistItems.length >= this.currentVideo + 1) {
+        if (this.playlistItems.length - 1 > this.currentVideo) {
           this.currentVideo++;
           var img = document.getElementById('imgActual') as HTMLImageElement;
           if (img != null) {
@@ -133,7 +133,7 @@ export class InicioComponent implements OnInit {
   }
 
   playerSkipNext(event: any) {
-    if (this.playlistItems.length >= this.currentVideo + 1) {
+    if (this.playlistItems.length - 1 > this.currentVideo) {
       this.currentVideo++;
       var img = document.getElementById('imgActual') as HTMLImageElement;
       if (img != null) {
