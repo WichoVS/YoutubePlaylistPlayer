@@ -1,0 +1,95 @@
+<div style="background-color: #5c0404" class="h-screen w-screen absolute">
+  <div class="flex flex-col items-center mt-10">
+    <div class="w-6/12 flex justify-center">
+      <label class="font-montserrat text-white text-xl w-1/12" for=""
+        >Playlist:
+      </label>
+      <input
+        #inpPlaylist
+        class="w-4/12 outline-none font-nunito pl-2 focus:border-black focus:border-b-2 border-solid"
+        type="text"
+        name=""
+        id=""
+      />
+      <button
+        (click)="ObtenerItemsPlaylist(inpPlaylist)"
+        class="flex justify-center bg-gray-400 w-1/12 hover:bg-gray-800"
+      >
+        <span class="material-icons text-white"> play_arrow </span>
+      </button>
+    </div>
+
+    <div class="w-4/12 justify-center flex mt-8 mb-5">
+      <img
+        id="imgActual"
+        class="h-full w-auto"
+        src="https://i.ytimg.com/vi/f64nXt1z4XU/hqdefault.jpg"
+        alt=""
+      />
+    </div>
+
+    <div class="flex w-4/12 justify-center">
+      <ng-container *ngIf="playlistItems.length != 0">
+        <label class="text-white font-nunito">{{
+          playlistItems[currentVideo].snippet.title
+        }}</label>
+      </ng-container>
+    </div>
+
+    <div class="flex w-4/12 justify-around mt-6">
+      <button
+        (click)="playerSkipPrev(this.player)"
+        class="text-white hover:text-red-400"
+      >
+        <span class="material-icons text-5xl"> skip_previous </span>
+      </button>
+      <button
+        (click)="playerPause(this.player)"
+        class="text-white hover:text-red-400"
+      >
+        <span class="material-icons text-5xl"> play_circle </span>
+      </button>
+      <button
+        (click)="playerSkipNext(this.player)"
+        class="text-white hover:text-red-400"
+      >
+        <span class="material-icons text-5xl"> skip_next </span>
+      </button>
+      <button
+        (click)="playerVolumeDown(this.player)"
+        class="text-white hover:text-red-400"
+      >
+        <span class="material-icons text-5xl"> volume_down </span>
+      </button>
+      <button
+        (click)="playerVolumeUp(this.player)"
+        class="text-white hover:text-red-400"
+      >
+        <span class="material-icons text-5xl"> volume_up </span>
+      </button>
+    </div>
+
+    <div
+      style="background-color: #350505"
+      class="w-6/12 max-h-80 h-80 overflow-y-auto mt-6 flex flex-col items-center pt-4 pb-4"
+    >
+      <ng-container *ngFor="let item of playlistItems">
+        <div
+          [class.bg-red-400]="item.position == currentVideo"
+          class="w-10/12 h-10 flex items-center hover:bg-red-700 hover:border-gray-900 rounded-sm mb-2"
+        >
+          <img
+            class="h-full w-auto mr-4"
+            src="{{ item.snippet.thumbnails.high.url }}"
+            alt=""
+          />
+          <label class="text-white font-nunito">{{
+            item.snippet.position + 1 + " - " + item.snippet.title
+          }}</label>
+        </div>
+      </ng-container>
+    </div>
+  </div>
+</div>
+
+<div id="player"></div>
