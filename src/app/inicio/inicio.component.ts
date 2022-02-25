@@ -93,7 +93,8 @@ export class InicioComponent implements OnInit {
               this.playlistItems[this.currentVideo].snippet.thumbnails.high.url;
           }
           this.player.loadVideoById(
-            this.playlistItems[this.currentVideo].snippet.resourceId.videoId
+            this.playlistItems[this.currentVideo].snippet.resourceId.videoId,
+            1
           );
         }
         break;
@@ -104,7 +105,10 @@ export class InicioComponent implements OnInit {
     this.player.setVolume(this.playerVol);
     this.isVideoPlaying = true;
     this.currentVideo = 0;
-    this.player.loadVideoById(this.playlistItems[0].snippet.resourceId.videoId);
+    this.player.loadVideoById(
+      this.playlistItems[0].snippet.resourceId.videoId,
+      1
+    );
   }
 
   playerVolumeUp(event: any) {
@@ -141,7 +145,8 @@ export class InicioComponent implements OnInit {
           this.playlistItems[this.currentVideo].snippet.thumbnails.high.url;
       }
       this.player.loadVideoById(
-        this.playlistItems[this.currentVideo].snippet.resourceId.videoId
+        this.playlistItems[this.currentVideo].snippet.resourceId.videoId,
+        1
       );
     }
   }
@@ -155,7 +160,8 @@ export class InicioComponent implements OnInit {
           this.playlistItems[this.currentVideo].snippet.thumbnails.high.url;
       }
       this.player.loadVideoById(
-        this.playlistItems[this.currentVideo].snippet.resourceId.videoId
+        this.playlistItems[this.currentVideo].snippet.resourceId.videoId,
+        1
       );
     }
   }
