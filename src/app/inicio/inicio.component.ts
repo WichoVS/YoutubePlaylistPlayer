@@ -25,10 +25,15 @@ export class InicioComponent implements OnInit {
   ObtenerItemsPlaylist(el: HTMLInputElement) {
     var link = el.value;
 
-    if (link.includes('playlist')) {
-      //https://youtube.com/playlist?list=PLGINh0aYNOJszP8zs7uaNTPgGhO2riFoS
-      link = link.replace('https://youtube.com/playlist?list=', '');
-      this.ytService.GetPlaylistItems(link).subscribe((data) => {
+    if (link == '') {
+      alert('Ingresa el link de la playlist al dar en Compartir');
+      return;
+    }
+
+    this.ytService.GetPlaylistItems(link).subscribe(
+      (data) => {
+        console.log(data);
+
         if (data) {
           if (this.isPlayerReady) {
             this.playlistItems = data.items;
@@ -36,13 +41,16 @@ export class InicioComponent implements OnInit {
             if (img != null) {
               img.src = this.playlistItems[0].snippet.thumbnails.high.url;
             }
+            this.ytService.SetCurrentSong(data.items[0]);
+            this.ytService.SetCurrentPlaylist(data.items);
             this.playerPlayVideo(this.player);
           }
         }
-      });
-    } else {
-      alert('Ingresa el link de la playlist al dar en Compartir');
-    }
+      },
+      (err) => {
+        alert(err.error.error.message);
+      }
+    );
   }
 
   Init() {
