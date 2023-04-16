@@ -9,7 +9,7 @@ import { YoutubeService } from '../services/youtube.service';
 export class InicioComponent implements OnInit {
   public YT: any;
   public video: any;
-  public player: any;
+  public player: any = null;
   public reframed: any;
   isVideoPlaying: boolean = false;
   isPlayerReady: boolean = false;

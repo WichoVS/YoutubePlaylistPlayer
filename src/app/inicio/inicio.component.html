@@ -29,9 +29,11 @@
     </div>
 
     <div class="flex w-4/12 justify-center">
-      <label class="text-white font-nunito">
-        {{ playlistItems[currentVideo].snippet.title }}</label
-      >
+      <ng-container *ngIf="this.player != null">
+        <label class="text-white font-nunito">
+          {{ playlistItems[currentVideo].snippet.title }}</label
+        >
+      </ng-container>
     </div>
 
     <div class="flex w-4/12 justify-around mt-6">
@@ -41,12 +43,23 @@
       >
         <span class="material-icons text-5xl"> skip_previous </span>
       </button>
-      <button
-        (click)="playerPause(this.player)"
-        class="text-white hover:text-red-400"
+      <ng-container *ngIf="!this.isVideoPlaying">
+        <button
+          (click)="playerPause(this.player)"
+          class="text-white hover:text-red-400"
+        >
+          <span class="material-icons text-5xl"> play_circle </span>
+        </button></ng-container
       >
-        <span class="material-icons text-5xl"> play_circle </span>
-      </button>
+      <ng-container *ngIf="this.isVideoPlaying">
+        <button
+          (click)="playerPause(this.player)"
+          class="text-white hover:text-red-400"
+        >
+          <span class="material-icons text-5xl"> pause </span>
+        </button>
+      </ng-container>
+
       <button
         (click)="playerSkipNext(this.player)"
         class="text-white hover:text-red-400"
@@ -66,7 +79,6 @@
         <span class="material-icons text-5xl"> volume_up </span>
       </button>
     </div>
-
     <div
       style="background-color: #350505"
       class="w-12/12 md:w-6/12 max-h-80 h-80 overflow-y-auto mt-6 flex flex-col items-center pt-4 pb-4 mb-20"
