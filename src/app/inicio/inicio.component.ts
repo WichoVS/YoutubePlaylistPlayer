@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { YoutubeService } from '../services/youtube.service';
 
 @Component({
@@ -7,170 +7,66 @@ import { YoutubeService } from '../services/youtube.service';
   styleUrls: ['./inicio.component.css'],
 })
 export class InicioComponent implements OnInit {
-  public YT: any;
-  public video: any;
-  public player: any = null;
-  public reframed: any;
-  isVideoPlaying: boolean = false;
-  isPlayerReady: boolean = false;
-  playlistItems: any = [];
-  playerVol: number = 50;
-  currentVideo: number = 0;
+  currentIndex = 0;
   constructor(private ytService: YoutubeService) {}
+
   imgActual = 'https://i.ytimg.com/vi/f64nXt1z4XU/hqdefault.jpg';
   ngOnInit(): void {
-    this.Init();
+    this.ytService.InitPlayer();
   }
 
-  ObtenerItemsPlaylist(el: HTMLInputElement) {
-    var link = el.value;
+  ObtenerItemsPlaylist(listId: HTMLInputElement) {
+    var link = listId.value;
 
     if (link == '') {
-      alert('Ingresa el link de la playlist al dar en Compartir');
+      alert('Ingresa el listId!');
       return;
     }
 
-    this.ytService.GetPlaylistItems(link).subscribe(
-      (data) => {
-        console.log(data);
-
-        if (data) {
-          if (this.isPlayerReady) {
-            this.playlistItems = data.items;
-            var img = document.getElementById('imgActual') as HTMLImageElement;
-            if (img != null) {
-              img.src = this.playlistItems[0].snippet.thumbnails.high.url;
-            }
-            this.ytService.SetCurrentSong(data.items[0]);
-            this.ytService.SetCurrentPlaylist(data.items);
-            this.playerPlayVideo(this.player);
-          }
-        }
-      },
-      (err) => {
-        alert(err.error.error.message);
-      }
-    );
+    this.ytService.FetchPlaylistItems(link);
   }
 
-  Init() {
-    var tag = document.createElement('script');
-    tag.src = 'https://www.youtube.com/iframe_api';
-    var fsTag = document.getElementsByTagName('script')[0];
-    fsTag.parentNode?.insertBefore(tag, fsTag);
-
-    (window as { [key: string]: any })['onYouTubeIframeAPIReady'] = () =>
-      this.StartVideo();
-  }
-  StartVideo() {
-    this.reframed = false;
-    this.player = new (window as { [key: string]: any })['YT'].Player(
-      'player',
-      {
-        height: '0',
-        width: '0',
-        videoId: '',
-        playerVars: {
-          autoplay: 1,
-        },
-        events: {
-          onReady: this.onPlayerReady.bind(this),
-          onStateChange: this.onPlayerStateChange.bind(this),
-          PlayVideo: this.playerPlayVideo.bind(this),
-        },
-      }
-    );
+  GetCurrentSong(): any {
+    return this.ytService.GetCurrentSong();
   }
 
-  onPlayerReady(event: any) {
-    this.isPlayerReady = true;
+  GetPlaylistItems(): any[] {
+    return this.ytService.GetCurrentPlaylist();
   }
 
-  onPlayerStateChange(event: any) {
-    switch (event.data) {
-      case (window as { [key: string]: any })['YT'].PlayerState.PLAYING:
-        break;
-      case (window as { [key: string]: any })['YT'].PlayerState.PAUSED:
-        break;
-      case (window as { [key: string]: any })['YT'].PlayerState.ENDED:
-        if (this.playlistItems.length - 1 > this.currentVideo) {
-          this.currentVideo++;
-          var img = document.getElementById('imgActual') as HTMLImageElement;
-          if (img != null) {
-            img.src =
-              this.playlistItems[this.currentVideo].snippet.thumbnails.high.url;
-          }
-          this.player.loadVideoById(
-            this.playlistItems[this.currentVideo].snippet.resourceId.videoId,
-            1
-          );
-        }
-        break;
-    }
+  GetPlayer() {
+    return this.ytService.player;
   }
 
-  playerPlayVideo(event: any) {
-    this.player.setVolume(this.playerVol);
-    this.isVideoPlaying = true;
-    this.currentVideo = 0;
-    this.player.loadVideoById(
-      this.playlistItems[0].snippet.resourceId.videoId,
-      1
-    );
+  CheckIfVideoPlaying() {
+    return this.ytService.isVideoPlaying;
   }
 
-  playerVolumeUp(event: any) {
-    this.playerVol += 10;
-    if (this.playerVol >= 100) {
-      this.playerVol = 100;
-    }
-    this.player.setVolume(this.playerVol);
+  GetCurrentPosition(): number {
+    return this.ytService.GetCurrentVideoPosition();
   }
 
-  playerVolumeDown(event: any) {
-    this.playerVol -= 10;
-    if (this.playerVol <= 0) {
-      this.playerVol = 0;
-    }
-    this.player.setVolume(this.playerVol);
+  SkipNext() {
+    this.ytService.playerSkipNext();
   }
 
-  playerPause(event: any) {
-    if (this.isVideoPlaying) {
-      this.player.pauseVideo();
-    } else {
-      this.player.playVideo();
-    }
-    this.isVideoPlaying = !this.isVideoPlaying;
+  SkipPrev() {
+    this.ytService.playerSkipPrev();
   }
 
-  playerSkipNext(event: any) {
-    if (this.playlistItems.length - 1 > this.currentVideo) {
-      this.currentVideo++;
-      var img = document.getElementById('imgActual') as HTMLImageElement;
-      if (img != null) {
-        img.src =
-          this.playlistItems[this.currentVideo].snippet.thumbnails.high.url;
-      }
-      this.player.loadVideoById(
-        this.playlistItems[this.currentVideo].snippet.resourceId.videoId,
-        1
-      );
-    }
+  Play() {
+    this.ytService.playerPause();
   }
 
-  playerSkipPrev(event: any) {
-    if (this.currentVideo > 0) {
-      this.currentVideo--;
-      var img = document.getElementById('imgActual') as HTMLImageElement;
-      if (img != null) {
-        img.src =
-          this.playlistItems[this.currentVideo].snippet.thumbnails.high.url;
-      }
-      this.player.loadVideoById(
-        this.playlistItems[this.currentVideo].snippet.resourceId.videoId,
-        1
-      );
-    }
+  Pause() {
+    this.ytService.playerPause();
+  }
+
+  VolDwn() {
+    this.ytService.playerVolumeDown();
+  }
+
+  VolUp() {
+    this.ytService.playerVolumeUp();
   }
 }

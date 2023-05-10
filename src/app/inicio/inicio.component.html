@@ -6,14 +6,14 @@
       </label>
       <input
         #inpPlaylist
-        class="w-6/12 outline-none font-nunito pl-2 focus:border-black focus:border-b-2 border-solid"
+        class="w-6/12 outline-none font-nunito pl-2 focus:border-black focus:border-b-2 border-solid rounded-l-md"
         type="text"
         name=""
         id=""
       />
       <button
         (click)="ObtenerItemsPlaylist(inpPlaylist)"
-        class="flex justify-center bg-gray-400 w-2/12 hover:bg-gray-800"
+        class="flex justify-center bg-gray-400 w-2/12 hover:bg-gray-800 rounded-r-md"
       >
         <span class="material-icons text-white"> play_arrow </span>
       </button>
@@ -29,63 +29,45 @@
     </div>
 
     <div class="flex w-4/12 justify-center">
-      <ng-container *ngIf="this.player != null">
-        <label class="text-white font-nunito">
-          {{ playlistItems[currentVideo].snippet.title }}</label
+      <ng-container *ngIf="GetPlayer() != null">
+        <label id="lblCurrent" class="text-white font-nunito whitespace-nowrap">
+          {{ GetCurrentSong().snippet.title }}</label
         >
       </ng-container>
     </div>
 
     <div class="flex w-4/12 justify-around mt-6">
-      <button
-        (click)="playerSkipPrev(this.player)"
-        class="text-white hover:text-red-400"
-      >
+      <button (click)="SkipPrev()" class="text-white hover:text-red-400">
         <span class="material-icons text-5xl"> skip_previous </span>
       </button>
-      <ng-container *ngIf="!this.isVideoPlaying">
-        <button
-          (click)="playerPause(this.player)"
-          class="text-white hover:text-red-400"
-        >
+      <ng-container *ngIf="!CheckIfVideoPlaying()">
+        <button (click)="Play()" class="text-white hover:text-red-400">
           <span class="material-icons text-5xl"> play_circle </span>
         </button></ng-container
       >
-      <ng-container *ngIf="this.isVideoPlaying">
-        <button
-          (click)="playerPause(this.player)"
-          class="text-white hover:text-red-400"
-        >
+      <ng-container *ngIf="CheckIfVideoPlaying()">
+        <button (click)="Pause()" class="text-white hover:text-red-400">
           <span class="material-icons text-5xl"> pause </span>
         </button>
       </ng-container>
 
-      <button
-        (click)="playerSkipNext(this.player)"
-        class="text-white hover:text-red-400"
-      >
+      <button (click)="SkipNext()" class="text-white hover:text-red-400">
         <span class="material-icons text-5xl"> skip_next </span>
       </button>
-      <button
-        (click)="playerVolumeDown(this.player)"
-        class="text-white hover:text-red-400"
-      >
+      <button (click)="VolDwn()" class="text-white hover:text-red-400">
         <span class="material-icons text-5xl"> volume_down </span>
       </button>
-      <button
-        (click)="playerVolumeUp(this.player)"
-        class="text-white hover:text-red-400"
-      >
+      <button (click)="VolUp()" class="text-white hover:text-red-400">
         <span class="material-icons text-5xl"> volume_up </span>
       </button>
     </div>
     <div
       style="background-color: #350505"
-      class="w-12/12 md:w-6/12 max-h-80 h-80 overflow-y-auto mt-6 flex flex-col items-center pt-4 pb-4 mb-20"
+      class="w-12/12 md:w-6/12 max-h-80 h-80 overflow-y-auto mt-6 flex flex-col items-center pt-4 pb-4 mb-20 rounded-md"
     >
-      <ng-container *ngFor="let item of playlistItems">
+      <ng-container *ngFor="let item of GetPlaylistItems(); let i = index">
         <div
-          [class.bg-red-400]="item.position == currentVideo"
+          [class.bg-red-400]="i == GetCurrentPosition()"
           class="w-10/12 h-10 flex items-center hover:bg-red-700 hover:border-gray-900 rounded-sm mb-2"
         >
           <img
