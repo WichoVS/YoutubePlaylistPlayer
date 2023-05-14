@@ -67,8 +67,9 @@
     >
       <ng-container *ngFor="let item of GetPlaylistItems(); let i = index">
         <div
-          [class.bg-red-400]="i == GetCurrentPosition()"
+          [ngClass]="{ 'bg-red-400': i === currentIndex }"
           class="w-10/12 h-10 flex items-center hover:bg-red-700 hover:border-gray-900 rounded-sm mb-2"
+          (click)="playSelectedItem(i)"
         >
           <img
             class="h-full w-auto mr-4"

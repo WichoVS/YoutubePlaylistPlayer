@@ -1,5 +1,6 @@
 import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { YoutubeService } from '../services/youtube.service';
+import { ChangeDetectorRef } from '@angular/core';
 
 @Component({
   selector: 'app-inicio',
@@ -8,11 +9,18 @@ import { YoutubeService } from '../services/youtube.service';
 })
 export class InicioComponent implements OnInit {
   currentIndex = 0;
-  constructor(private ytService: YoutubeService) {}
+  constructor(
+    private ytService: YoutubeService,
+    private cd: ChangeDetectorRef
+  ) {}
 
   imgActual = 'https://i.ytimg.com/vi/f64nXt1z4XU/hqdefault.jpg';
   ngOnInit(): void {
     this.ytService.InitPlayer();
+    this.ytService.RegisterCallback((index) => {
+      this.currentIndex = index;
+      this.cd.detectChanges();
+    });
   }
 
   ObtenerItemsPlaylist(listId: HTMLInputElement) {
@@ -68,5 +76,9 @@ export class InicioComponent implements OnInit {
 
   VolUp() {
     this.ytService.playerVolumeUp();
+  }
+
+  playSelectedItem(index: number) {
+    this.ytService.PlaySongAtPosition(index);
   }
 }

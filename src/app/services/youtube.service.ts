@@ -17,6 +17,7 @@ export class YoutubeService {
   APIKEY: string = 'AIzaSyCahpRLo0SMKUbnrzzgOjZjwdZXRy6wwso';
   currentPlaylist: [] = [];
   currentSong: any = {} as any;
+  callbacks: ((index: number) => void)[] = [];
 
   constructor(private http: HttpClient) {}
 
@@ -137,6 +138,7 @@ export class YoutubeService {
       lbl.innerText = next.snippet.title;
       this.player.loadVideoById(next.snippet.resourceId.videoId, 1);
       this.SetCurrentSong(next);
+      this.callbacks.forEach((callback) => callback(this.currentVideo));
     }
   }
 
@@ -153,6 +155,7 @@ export class YoutubeService {
       this.player.loadVideoById(prev.snippet.resourceId.videoId, 1);
 
       this.SetCurrentSong(prev);
+      this.callbacks.forEach((callback) => callback(this.currentVideo));
     }
   }
 
@@ -160,6 +163,21 @@ export class YoutubeService {
     return this.http.get<any>(
       `${this.urlBase}playlistItems?part=snippet&playlistId=${idPlaylist}&key=${this.APIKEY}&maxResults=50`
     );
+  }
+
+  PlaySongAtPosition(index: number) {
+    this.currentVideo = index;
+    let img = document.getElementById('imgActual') as HTMLImageElement;
+    let lbl = document.getElementById('lblCurrent') as HTMLLabelElement;
+    let prev = this.playlistItems[this.currentVideo];
+    if (img != null) {
+      img.src = prev.snippet.thumbnails.high.url;
+    }
+    lbl.innerText = prev.snippet.title;
+    this.player.loadVideoById(prev.snippet.resourceId.videoId, 1);
+
+    this.SetCurrentSong(prev);
+    this.callbacks.forEach((callback) => callback(this.currentVideo));
   }
 
   SetCurrentPlaylist(playlist: []) {
@@ -188,5 +206,9 @@ export class YoutubeService {
 
   GetCurrentVideoPosition(): number {
     return this.currentVideo;
+  }
+
+  RegisterCallback(callback: (index: number) => void) {
+    this.callbacks.push(callback);
   }
 }
