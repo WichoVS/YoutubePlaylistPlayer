@@ -1,6 +1,8 @@
 import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { YoutubeService } from '../services/youtube.service';
 import { ChangeDetectorRef } from '@angular/core';
+import Swal from 'sweetalert2';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-inicio',
@@ -11,7 +13,8 @@ export class InicioComponent implements OnInit {
   currentIndex = 0;
   constructor(
     private ytService: YoutubeService,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private http: HttpClient
   ) {}
 
   imgActual = 'https://i.ytimg.com/vi/f64nXt1z4XU/hqdefault.jpg';
@@ -80,5 +83,31 @@ export class InicioComponent implements OnInit {
 
   playSelectedItem(index: number) {
     this.ytService.PlaySongAtPosition(index);
+  }
+
+  alertUpdates() {
+    this.GetLastestUpdates().subscribe(
+      (data) => {
+        let bdy = data.body.replace(/\r\n/g, '<br>');
+        console.log(bdy);
+
+        Swal.fire({
+          title: data.name,
+          html: `<div class="text-left">${bdy}</div>`,
+          icon: 'info',
+        });
+      },
+      (err) => {
+        Swal.fire({ title: 'Error', text: 'Github API error', icon: 'error' });
+      }
+    );
+
+    //
+  }
+
+  GetLastestUpdates() {
+    return this.http.get<any>(
+      'https://api.github.com/repos/WichoVS/YoutubePlaylistPlayer/releases/latest'
+    );
   }
 }
